@@ -9,4 +9,4 @@ crate-type = ["cdylib"]
 
 [dependencies]
 rustler = "0.37.0"
-hi_sparse_bitset = "0.7.3"
+roaring = "0.11.2"
