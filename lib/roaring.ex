@@ -5,6 +5,14 @@ defmodule Roaring do
     NifBridge.new()
   end
 
+  def from_list(members) do
+    #TODO: implement this within the NIF
+    {:ok, set} = new()
+    Enum.each(members, & NifBridge.insert(set, &1))
+
+    {:ok, set}
+  end
+
   def to_list(set) do
     NifBridge.to_list(set)
   end
