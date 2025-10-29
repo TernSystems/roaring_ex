@@ -1,5 +1,5 @@
-defmodule SparseBitset do
-  alias SparseBitset.NifBridge
+defmodule Roaring do
+  alias Roaring.NifBridge
 
   def new() do
     NifBridge.new()

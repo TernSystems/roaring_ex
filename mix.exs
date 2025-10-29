@@ -1,9 +1,9 @@
-defmodule SparseBitset.MixProject do
+defmodule Roaring.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :sparse_bitset,
+      app: :roaring,
       version: "0.11.2",
       elixir: "~> 1.18",
       start_permanent: Mix.env() == :prod,

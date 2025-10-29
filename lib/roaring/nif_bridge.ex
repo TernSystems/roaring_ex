@@ -1,7 +1,7 @@
-defmodule SparseBitset.NifBridge do
+defmodule Roaring.NifBridge do
   use Rustler,
-    otp_app: :sparse_bitset,
-    crate: :sparsebitset
+    otp_app: :roaring,
+    crate: :roaring_nif
 
   def new(), do: :erlang.nif_error(:nif_not_loaded)
   def to_list(_set), do: :erlang.nif_error(:nif_not_loaded)

@@ -4,47 +4,34 @@ use rustler::{Atom,Resource,ResourceArc};
 
 
 use roaring::RoaringTreemap;
-pub struct SparseBitsetResource(Mutex<RoaringTreemap>);
+pub struct RoaringBitsetResource(Mutex<RoaringTreemap>);
 
 #[rustler::resource_impl]
-impl Resource for SparseBitsetResource {
+impl Resource for RoaringBitsetResource {
     const IMPLEMENTS_DESTRUCTOR: bool = false;
 }
 
-type SparseBitsetArc = ResourceArc<SparseBitsetResource>;
+type RoaringBitsetArc = ResourceArc<RoaringBitsetResource>;
 
 mod atoms {
     rustler::atoms! {
         // Common Atoms
         ok,
         error,
-
         // Resource Atoms
-        bad_reference,
-        lock_fail,
-
-        // Success Atoms
-        added,
-        duplicate,
-        removed,
-
-        // Error Atoms
-        unsupported_type,
-        not_found,
-        index_out_of_bounds,
-        max_bucket_size_exceeded,
+        lock_fail
     }
 }
 
 #[rustler::nif]
-fn new() -> (Atom, SparseBitsetArc) {
-    let resource = ResourceArc::new(SparseBitsetResource(Mutex::new(RoaringTreemap::new())));
+fn new() -> (Atom, RoaringBitsetArc) {
+    let resource = ResourceArc::new(RoaringBitsetResource(Mutex::new(RoaringTreemap::new())));
 
     (atoms::ok(), resource)
 }
 
 #[rustler::nif]
-fn to_list(resource: ResourceArc<SparseBitsetResource>) -> Result<Vec<u64>, Atom> {
+fn to_list(resource: ResourceArc<RoaringBitsetResource>) -> Result<Vec<u64>, Atom> {
     let set = match resource.0.try_lock() {
         Err(_) => return Err(atoms::lock_fail()),
         Ok(guard) => guard,
@@ -55,7 +42,7 @@ fn to_list(resource: ResourceArc<SparseBitsetResource>) -> Result<Vec<u64>, Atom
 }
 
 #[rustler::nif]
-fn insert(resource: ResourceArc<SparseBitsetResource>, index: u64) -> Result<Atom, Atom> {
+fn insert(resource: ResourceArc<RoaringBitsetResource>, index: u64) -> Result<Atom, Atom> {
     let mut set = match resource.0.try_lock() {
         Err(_) => return Err(atoms::lock_fail()),
         Ok(guard) => guard,
@@ -67,7 +54,7 @@ fn insert(resource: ResourceArc<SparseBitsetResource>, index: u64) -> Result<Ato
 }
 
 #[rustler::nif]
-fn contains(resource: ResourceArc<SparseBitsetResource>, index: u64) ->  Result<bool, Atom> {
+fn contains(resource: ResourceArc<RoaringBitsetResource>, index: u64) ->  Result<bool, Atom> {
     let set = match resource.0.try_lock() {
         Err(_) => return Err(atoms::lock_fail()),
         Ok(guard) => guard,
@@ -77,7 +64,7 @@ fn contains(resource: ResourceArc<SparseBitsetResource>, index: u64) ->  Result<
 }
 
 #[rustler::nif]
-fn intersection(resource1: ResourceArc<SparseBitsetResource>, resource2: ResourceArc<SparseBitsetResource>) -> Result<SparseBitsetArc, Atom> {
+fn intersection(resource1: ResourceArc<RoaringBitsetResource>, resource2: ResourceArc<RoaringBitsetResource>) -> Result<RoaringBitsetArc, Atom> {
     let set1 = match resource1.0.try_lock() {
         Err(_) => return Err(atoms::lock_fail()),
         Ok(guard) => guard,
@@ -89,13 +76,13 @@ fn intersection(resource1: ResourceArc<SparseBitsetResource>, resource2: Resourc
     };
 
     let result = set1.clone() & set2.clone();
-    let new_resource = ResourceArc::new(SparseBitsetResource(Mutex::new(result)));
+    let new_resource = ResourceArc::new(RoaringBitsetResource(Mutex::new(result)));
 
     Ok(new_resource)
 }
 
 #[rustler::nif]
-fn union(resource1: ResourceArc<SparseBitsetResource>, resource2: ResourceArc<SparseBitsetResource>) -> Result<SparseBitsetArc, Atom> {
+fn union(resource1: ResourceArc<RoaringBitsetResource>, resource2: ResourceArc<RoaringBitsetResource>) -> Result<RoaringBitsetArc, Atom> {
     let set1 = match resource1.0.try_lock() {
         Err(_) => return Err(atoms::lock_fail()),
         Ok(guard) => guard,
@@ -107,8 +94,8 @@ fn union(resource1: ResourceArc<SparseBitsetResource>, resource2: ResourceArc<Sp
     };
 
     let result = set1.clone() | set2.clone();
-    let new_resource = ResourceArc::new(SparseBitsetResource(Mutex::new(result)));
+    let new_resource = ResourceArc::new(RoaringBitsetResource(Mutex::new(result)));
 
     Ok(new_resource)
 }
-rustler::init!("Elixir.SparseBitset.NifBridge");
+rustler::init!("Elixir.Roaring.NifBridge");

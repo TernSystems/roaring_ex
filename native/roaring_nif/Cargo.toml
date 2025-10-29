@@ -1,7 +1,7 @@
 [package]
-name = "sparsebitset"
-version = "0.1.0"
-authors = []
+name = "roaring_nif"
+version = "0.11.2"
+authors = ["Dan Thiffault"]
 edition = "2021"
 
 [lib]
