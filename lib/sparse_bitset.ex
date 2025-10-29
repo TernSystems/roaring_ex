@@ -21,14 +21,14 @@ defmodule SparseBitset do
 
   def intersection([set1 | rest]) do
     # TODO: Ideally we'd push down all the sets at once into the NIF
-    Enum.reduce(rest, set1, fn next_set, result -> 
+    Enum.reduce(rest, set1, fn next_set, result ->
       NifBridge.intersection(result, next_set)
     end)
   end
 
   def union([set1 | rest]) do
     # TODO: Ideally we'd push down all the sets at once into the NIF
-    Enum.reduce(rest, set1, fn next_set, result -> 
+    Enum.reduce(rest, set1, fn next_set, result ->
       NifBridge.union(result, next_set)
     end)
   end

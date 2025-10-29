@@ -1,6 +1,6 @@
 # SparseBitset
 
-**TODO: Add description**
+Rustler wrapper around [roaring-rs](https://github.com/RoaringBitmap/roaring-rs/) a Rust roaring bitmap implementation
 
 ## Installation
 
@@ -10,7 +10,7 @@ by adding `sparse_bitset` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:sparse_bitset, "~> 0.1.0"}
+    {:sparse_bitset, "~> 0.11.2"}
   ]
 end
 ```
