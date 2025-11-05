@@ -1,7 +1,8 @@
 use std::sync::Mutex;
 
-use rustler::{Atom,Resource,ResourceArc};
-
+use rustler::{Atom,Env,Resource,ResourceArc};
+use rustler::types::binary::Binary;
+use rustler::types::binary::OwnedBinary;
 
 use roaring::RoaringTreemap;
 pub struct RoaringBitsetResource(Mutex<RoaringTreemap>);
@@ -98,4 +99,31 @@ fn union(resource1: ResourceArc<RoaringBitsetResource>, resource2: ResourceArc<R
 
     Ok(new_resource)
 }
-rustler::init!("Elixir.Roaring.NifBridge");
+
+#[rustler::nif]
+fn serialize(env: Env, resource: ResourceArc<RoaringBitsetResource>) -> Result<Binary, Atom> {
+    let set = match resource.0.try_lock() {
+        Err(_) => return Err(atoms::lock_fail()),
+        Ok(guard) => guard,
+    };
+
+    let mut bytes = vec![];
+    set.serialize_into(&mut bytes).unwrap();
+
+    let mut binary: OwnedBinary = OwnedBinary::new(bytes.len()).unwrap();
+    binary.as_mut_slice().copy_from_slice(&bytes);
+
+    Ok(binary.release(env))
+}
+
+#[rustler::nif]
+fn deserialize(binary: Binary) -> Result<RoaringBitsetArc, Atom> {
+    let buffer = binary.as_slice();
+    let set: RoaringTreemap = RoaringTreemap::deserialize_from(&buffer[..]).unwrap();
+
+    let new_resource = ResourceArc::new(RoaringBitsetResource(Mutex::new(set)));
+
+    Ok(new_resource)
+}
+
+rustler::init!("Elixir.RoaringBitset.NifBridge");
