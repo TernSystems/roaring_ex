@@ -11,7 +11,7 @@ defmodule RoaringBitset do
   """
   alias RoaringBitset.NifBridge
 
-  @doc ~S"""
+  @doc """
   Return a reference to a new roaring bitset
 
   ## Examples
@@ -23,7 +23,7 @@ defmodule RoaringBitset do
     NifBridge.new()
   end
 
-  @doc ~S"""
+  @doc """
   Create a new bitset from the list of `members`. Can take any enumerable as input, 
   but may not be performant, particularly for large lists. Prefer RoaringBitset.deserialize/1 
   if performance is critical
@@ -39,7 +39,7 @@ defmodule RoaringBitset do
     {:ok, set}
   end
 
-  @doc ~S"""
+  @doc """
   Export this bitset to a list. Leaves the `bitset_ref` still valid. May not be performant
   particularly for large lists. Prefer RoaringBitset.serialize/1 if performance is critical
 
@@ -51,7 +51,7 @@ defmodule RoaringBitset do
     NifBridge.to_list(set)
   end
 
-  @doc ~S"""
+  @doc """
   Inserts a `member` into the referenced set
 
   ## Examples
@@ -63,7 +63,7 @@ defmodule RoaringBitset do
     :ok
   end
 
-  @doc ~S"""
+  @doc """
   Checks for set membership.
 
   ## Examples
@@ -74,7 +74,7 @@ defmodule RoaringBitset do
     NifBridge.contains(set, index)
   end
 
-  @doc ~S"""
+  @doc """
   Returns a reference to a new set representing the intersection of 
   all supplied sets
 
@@ -91,7 +91,7 @@ defmodule RoaringBitset do
 
   def intersection(set1, set2), do: intersection([set1, set2])
 
-  @doc ~S"""
+  @doc """
   Returns a reference to a new set representing the union of 
   all supplied sets
 
@@ -108,7 +108,7 @@ defmodule RoaringBitset do
 
   def union(set1, set2), do: union([set1, set2])
 
-  @doc ~S"""
+  @doc """
   Serializes the bitset to the [cross platform serialization format](https://github.com/RoaringBitmap/RoaringFormatSpec/) 
   in binary form.  (64-bit)
 
@@ -120,7 +120,7 @@ defmodule RoaringBitset do
     NifBridge.serialize(set)
   end
 
-  @doc ~S"""
+  @doc """
   Deserializes a binary into a new bitset ref
   Uses the [cross platform serialization format](https://github.com/RoaringBitmap/RoaringFormatSpec/) 
   in binary form. (64-bit)
@@ -131,5 +131,11 @@ defmodule RoaringBitset do
   """
   def deserialize(binary) do
     NifBridge.deserialize(binary)
+  end
+
+  @doc """
+  """
+  def equal?(set1, set2) do
+     NifBridge.equal(set1, set2) 
   end
 end

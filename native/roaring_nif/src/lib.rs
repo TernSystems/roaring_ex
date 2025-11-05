@@ -126,4 +126,19 @@ fn deserialize(binary: Binary) -> Result<RoaringBitsetArc, Atom> {
     Ok(new_resource)
 }
 
+#[rustler::nif]
+fn equal(resource1: ResourceArc<RoaringBitsetResource>, resource2: ResourceArc<RoaringBitsetResource>) -> Result<bool, Atom> {
+    let set1 = match resource1.0.try_lock() {
+        Err(_) => return Err(atoms::lock_fail()),
+        Ok(guard) => guard,
+    };
+
+    let set2 = match resource2.0.try_lock() {
+        Err(_) => return Err(atoms::lock_fail()),
+        Ok(guard) => guard,
+    };
+
+    Ok(set1.symmetric_difference_len(&set2) == 0)
+}
+
 rustler::init!("Elixir.RoaringBitset.NifBridge");

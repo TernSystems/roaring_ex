@@ -65,4 +65,23 @@ defmodule RoaringBitsetTest do
     assert members1 == [1, 2, 3]
     assert members2 == [1, 2, 3]
   end
+
+  test "equal?/2" do
+    {:ok, bitset1} = RoaringBitset.new()
+    {:ok, bitset2} = RoaringBitset.new()
+
+    assert {:ok, true} == RoaringBitset.equal?(bitset1, bitset2)
+
+    RoaringBitset.insert(bitset1, 1)
+
+    assert {:ok, false} ==  RoaringBitset.equal?(bitset1, bitset2)
+
+    RoaringBitset.insert(bitset2, 1)
+    
+    assert {:ok, true} == RoaringBitset.equal?(bitset1, bitset2)
+
+    RoaringBitset.insert(bitset2, 2)
+
+    assert {:ok, false} ==  RoaringBitset.equal?(bitset1, bitset2)
+  end
 end
