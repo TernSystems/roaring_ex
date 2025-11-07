@@ -74,14 +74,24 @@ defmodule RoaringBitsetTest do
 
     RoaringBitset.insert(bitset1, 1)
 
-    assert {:ok, false} ==  RoaringBitset.equal?(bitset1, bitset2)
+    assert {:ok, false} == RoaringBitset.equal?(bitset1, bitset2)
 
     RoaringBitset.insert(bitset2, 1)
-    
+
     assert {:ok, true} == RoaringBitset.equal?(bitset1, bitset2)
 
     RoaringBitset.insert(bitset2, 2)
 
-    assert {:ok, false} ==  RoaringBitset.equal?(bitset1, bitset2)
+    assert {:ok, false} == RoaringBitset.equal?(bitset1, bitset2)
+  end
+
+  test "size/1" do
+    {:ok, bitset} = RoaringBitset.new()
+
+    assert {:ok, 0} == RoaringBitset.size(bitset)
+
+    RoaringBitset.insert(bitset, 42)
+
+    assert {:ok, 1} == RoaringBitset.size(bitset)
   end
 end

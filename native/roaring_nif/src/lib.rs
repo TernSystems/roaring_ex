@@ -141,4 +141,14 @@ fn equal(resource1: ResourceArc<RoaringBitsetResource>, resource2: ResourceArc<R
     Ok(set1.symmetric_difference_len(&set2) == 0)
 }
 
+#[rustler::nif]
+fn size(resource: ResourceArc<RoaringBitsetResource>) -> Result<u64, Atom> {
+    let set = match resource.0.try_lock() {
+        Err(_) => return Err(atoms::lock_fail()),
+        Ok(guard) => guard,
+    };
+
+    Ok(set.len())
+}
+
 rustler::init!("Elixir.RoaringBitset.NifBridge");

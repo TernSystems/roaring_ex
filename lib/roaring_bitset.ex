@@ -134,8 +134,16 @@ defmodule RoaringBitset do
   end
 
   @doc """
+  Check for the equality of two sets
   """
   def equal?(set1, set2) do
-     NifBridge.equal(set1, set2) 
+    NifBridge.equal(set1, set2)
+  end
+
+  @doc """
+  Returns the number of members within the set
+  """
+  def size(set) do
+    NifBridge.size(set)
   end
 end
