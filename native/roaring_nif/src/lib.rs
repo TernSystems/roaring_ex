@@ -1,11 +1,11 @@
-use std::sync::Mutex;
+use std::sync::RwLock;
 
 use rustler::{Atom,Env,Resource,ResourceArc};
 use rustler::types::binary::Binary;
 use rustler::types::binary::OwnedBinary;
 
 use roaring::RoaringTreemap;
-pub struct RoaringBitsetResource(Mutex<RoaringTreemap>);
+pub struct RoaringBitsetResource(RwLock<RoaringTreemap>);
 
 #[rustler::resource_impl]
 impl Resource for RoaringBitsetResource {
@@ -26,14 +26,14 @@ mod atoms {
 
 #[rustler::nif]
 fn new() -> (Atom, RoaringBitsetArc) {
-    let resource = ResourceArc::new(RoaringBitsetResource(Mutex::new(RoaringTreemap::new())));
+    let resource = ResourceArc::new(RoaringBitsetResource(RwLock::new(RoaringTreemap::new())));
 
     (atoms::ok(), resource)
 }
 
 #[rustler::nif]
 fn to_list(resource: ResourceArc<RoaringBitsetResource>) -> Result<Vec<u64>, Atom> {
-    let set = match resource.0.try_lock() {
+    let set = match resource.0.try_read() {
         Err(_) => return Err(atoms::lock_fail()),
         Ok(guard) => guard,
     };
@@ -44,7 +44,7 @@ fn to_list(resource: ResourceArc<RoaringBitsetResource>) -> Result<Vec<u64>, Ato
 
 #[rustler::nif]
 fn insert(resource: ResourceArc<RoaringBitsetResource>, index: u64) -> Result<Atom, Atom> {
-    let mut set = match resource.0.try_lock() {
+    let mut set = match resource.0.try_write() {
         Err(_) => return Err(atoms::lock_fail()),
         Ok(guard) => guard,
     };
@@ -56,7 +56,7 @@ fn insert(resource: ResourceArc<RoaringBitsetResource>, index: u64) -> Result<At
 
 #[rustler::nif]
 fn contains(resource: ResourceArc<RoaringBitsetResource>, index: u64) ->  Result<bool, Atom> {
-    let set = match resource.0.try_lock() {
+    let set = match resource.0.try_read() {
         Err(_) => return Err(atoms::lock_fail()),
         Ok(guard) => guard,
     };
@@ -66,43 +66,43 @@ fn contains(resource: ResourceArc<RoaringBitsetResource>, index: u64) ->  Result
 
 #[rustler::nif]
 fn intersection(resource1: ResourceArc<RoaringBitsetResource>, resource2: ResourceArc<RoaringBitsetResource>) -> Result<RoaringBitsetArc, Atom> {
-    let set1 = match resource1.0.try_lock() {
+    let set1 = match resource1.0.try_read() {
         Err(_) => return Err(atoms::lock_fail()),
         Ok(guard) => guard,
     };
 
-    let set2 = match resource2.0.try_lock() {
+    let set2 = match resource2.0.try_read() {
         Err(_) => return Err(atoms::lock_fail()),
         Ok(guard) => guard,
     };
 
     let result = set1.clone() & set2.clone();
-    let new_resource = ResourceArc::new(RoaringBitsetResource(Mutex::new(result)));
+    let new_resource = ResourceArc::new(RoaringBitsetResource(RwLock::new(result)));
 
     Ok(new_resource)
 }
 
 #[rustler::nif]
 fn union(resource1: ResourceArc<RoaringBitsetResource>, resource2: ResourceArc<RoaringBitsetResource>) -> Result<RoaringBitsetArc, Atom> {
-    let set1 = match resource1.0.try_lock() {
+    let set1 = match resource1.0.try_read() {
         Err(_) => return Err(atoms::lock_fail()),
         Ok(guard) => guard,
     };
 
-    let set2 = match resource2.0.try_lock() {
+    let set2 = match resource2.0.try_read() {
         Err(_) => return Err(atoms::lock_fail()),
         Ok(guard) => guard,
     };
 
     let result = set1.clone() | set2.clone();
-    let new_resource = ResourceArc::new(RoaringBitsetResource(Mutex::new(result)));
+    let new_resource = ResourceArc::new(RoaringBitsetResource(RwLock::new(result)));
 
     Ok(new_resource)
 }
 
 #[rustler::nif]
 fn serialize(env: Env, resource: ResourceArc<RoaringBitsetResource>) -> Result<Binary, Atom> {
-    let set = match resource.0.try_lock() {
+    let set = match resource.0.try_read() {
         Err(_) => return Err(atoms::lock_fail()),
         Ok(guard) => guard,
     };
@@ -121,19 +121,19 @@ fn deserialize(binary: Binary) -> Result<RoaringBitsetArc, Atom> {
     let buffer = binary.as_slice();
     let set: RoaringTreemap = RoaringTreemap::deserialize_from(&buffer[..]).unwrap();
 
-    let new_resource = ResourceArc::new(RoaringBitsetResource(Mutex::new(set)));
+    let new_resource = ResourceArc::new(RoaringBitsetResource(RwLock::new(set)));
 
     Ok(new_resource)
 }
 
 #[rustler::nif]
 fn equal(resource1: ResourceArc<RoaringBitsetResource>, resource2: ResourceArc<RoaringBitsetResource>) -> Result<bool, Atom> {
-    let set1 = match resource1.0.try_lock() {
+    let set1 = match resource1.0.try_read() {
         Err(_) => return Err(atoms::lock_fail()),
         Ok(guard) => guard,
     };
 
-    let set2 = match resource2.0.try_lock() {
+    let set2 = match resource2.0.try_read() {
         Err(_) => return Err(atoms::lock_fail()),
         Ok(guard) => guard,
     };
@@ -143,7 +143,7 @@ fn equal(resource1: ResourceArc<RoaringBitsetResource>, resource2: ResourceArc<R
 
 #[rustler::nif]
 fn size(resource: ResourceArc<RoaringBitsetResource>) -> Result<u64, Atom> {
-    let set = match resource.0.try_lock() {
+    let set = match resource.0.try_read() {
         Err(_) => return Err(atoms::lock_fail()),
         Ok(guard) => guard,
     };
