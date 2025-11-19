@@ -6,11 +6,11 @@ defmodule Ecto.RoaringBitset do
   def cast(nil), do: {:ok, nil}
 
   def cast(bitset) when is_reference(bitset) do
-    {:ok, bitset}
+    RoaringBitset.serialize(bitset)
   end
 
   def cast(data) when is_binary(data) do
-    RoaringBitset.deserialize(data)
+    {:ok, data}
   end
 
   def load(data) when is_binary(data) do
@@ -23,6 +23,10 @@ defmodule Ecto.RoaringBitset do
 
   def dump(bitset) when is_reference(bitset) do
     RoaringBitset.serialize(bitset)
+  end
+
+  def dump(data) when is_binary(data) do
+    {:ok, data}
   end
 
   def dump(_), do: :error
