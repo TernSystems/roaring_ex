@@ -6,11 +6,11 @@ defmodule Ecto.RoaringBitset do
   def cast(nil), do: {:ok, nil}
 
   def cast(bitset) when is_reference(bitset) do
-    RoaringBitset.serialize(bitset)
+    {:ok, bitset}
   end
 
   def cast(data) when is_binary(data) do
-    {:ok, data}
+    RoaringBitset.deserialize(data)
   end
 
   def load(data) when is_binary(data) do
@@ -35,23 +35,14 @@ defmodule Ecto.RoaringBitset do
   def equal?(nil, _), do: false
   def equal?(_, nil), do: false
 
-  def equal?(bitset1, bitset2) do
+  def equal?(bitset_ref_1, bitset_ref_2) when is_reference(bitset_ref_1) and is_reference(bitset_ref_2) do
     # Ecto uses equal? to determine if a field has changed in a changeset. However,
-    # when we load a bitset we load the deserialized version and when we cast it we
-    # use the serialized version. Make sure both are serialized so we can compare.
+    # our bitset membership may have changed even if the reference did not change.
+    # If that is the case, bitset_ref_1 will be the same as bitset_ref_2 and will always
+    # look to be equal when serialized even if the membership used to be different.
 
-    with {:ok, b1} <- normalize(bitset1),
-         {:ok, b2} <- normalize(bitset2),
-         {:ok, equal?} <- RoaringBitset.equal?(b1, b2) do
-      equal?
-    else
-      _ -> false
-    end
-  end
+    # Always return false so we always capture changes.
 
-  defp normalize(bitset) when is_reference(bitset), do: {:ok, bitset}
-
-  defp normalize(data) when is_binary(data) do
-    RoaringBitset.deserialize(data)
+    false
   end
 end
