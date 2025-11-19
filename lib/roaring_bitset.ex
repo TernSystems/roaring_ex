@@ -67,7 +67,7 @@ defmodule RoaringBitset do
   Removes a `member` from the referenced set
 
   ## Examples
-      iex> RoaringBitset.insert(bitset_ref, 15)
+      iex> RoaringBitset.remove(bitset_ref, 15)
       :ok
   """
   def remove(set, member) do
