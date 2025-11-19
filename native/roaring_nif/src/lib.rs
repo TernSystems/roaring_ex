@@ -55,6 +55,18 @@ fn insert(resource: ResourceArc<RoaringBitsetResource>, index: u64) -> Result<At
 }
 
 #[rustler::nif]
+fn remove(resource: ResourceArc<RoaringBitsetResource>, index: u64) -> Result<Atom, Atom> {
+    let mut set = match resource.0.try_write() {
+        Err(_) => return Err(atoms::lock_fail()),
+        Ok(guard) => guard,
+    };
+
+    set.remove(index);
+
+    Ok(atoms::ok())
+}
+
+#[rustler::nif]
 fn contains(resource: ResourceArc<RoaringBitsetResource>, index: u64) ->  Result<bool, Atom> {
     let set = match resource.0.try_read() {
         Err(_) => return Err(atoms::lock_fail()),

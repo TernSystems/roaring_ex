@@ -3,7 +3,7 @@ defmodule RoaringBitset do
   Provides a NIF for interfacing with [Roaring Bitmaps]
   (https://github.com/RoaringBitmap/roaring-rs)
 
-  The bitsets are managed in memory by rust behind a mutex. 
+  The bitsets are managed in memory by rust behind a mutex.
   All members are 64 bit unsigned ints
 
   Any method on an existing bitset ref may return {:error, :lock_fail}
@@ -24,8 +24,8 @@ defmodule RoaringBitset do
   end
 
   @doc """
-  Create a new bitset from the list of `members`. Can take any enumerable as input, 
-  but may not be performant, particularly for large lists. Prefer RoaringBitset.deserialize/1 
+  Create a new bitset from the list of `members`. Can take any enumerable as input,
+  but may not be performant, particularly for large lists. Prefer RoaringBitset.deserialize/1
   if performance is critical
   ## Examples
       iex> RoaringBitset.from_list([1, 2, 22])
@@ -64,6 +64,18 @@ defmodule RoaringBitset do
   end
 
   @doc """
+  Removes a `member` from the referenced set
+
+  ## Examples
+      iex> RoaringBitset.insert(bitset_ref, 15)
+      :ok
+  """
+  def remove(set, member) do
+    {:ok, :ok} = NifBridge.remove(set, member)
+    :ok
+  end
+
+  @doc """
   Checks for set membership.
 
   ## Examples
@@ -75,7 +87,7 @@ defmodule RoaringBitset do
   end
 
   @doc """
-  Returns a reference to a new set representing the intersection of 
+  Returns a reference to a new set representing the intersection of
   all supplied sets
 
   ## Examples
@@ -92,7 +104,7 @@ defmodule RoaringBitset do
   def intersection(set1, set2), do: intersection([set1, set2])
 
   @doc """
-  Returns a reference to a new set representing the union of 
+  Returns a reference to a new set representing the union of
   all supplied sets
 
   ## Examples
@@ -109,7 +121,7 @@ defmodule RoaringBitset do
   def union(set1, set2), do: union([set1, set2])
 
   @doc """
-  Serializes the bitset to the [cross platform serialization format](https://github.com/RoaringBitmap/RoaringFormatSpec/) 
+  Serializes the bitset to the [cross platform serialization format](https://github.com/RoaringBitmap/RoaringFormatSpec/)
   in binary form.  (64-bit)
 
   ## Examples
@@ -122,7 +134,7 @@ defmodule RoaringBitset do
 
   @doc """
   Deserializes a binary into a new bitset ref
-  Uses the [cross platform serialization format](https://github.com/RoaringBitmap/RoaringFormatSpec/) 
+  Uses the [cross platform serialization format](https://github.com/RoaringBitmap/RoaringFormatSpec/)
   in binary form. (64-bit)
 
   ## Examples

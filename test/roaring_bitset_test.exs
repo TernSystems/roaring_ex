@@ -11,6 +11,17 @@ defmodule RoaringBitsetTest do
     assert result == [1, 4]
   end
 
+  test "remove/2" do
+    {:ok, bitset} = RoaringBitset.new()
+
+    RoaringBitset.insert(bitset, 1)
+    RoaringBitset.insert(bitset, 2)
+    RoaringBitset.remove(bitset, 1)
+
+    assert {:ok, false} == RoaringBitset.contains?(bitset, 1)
+    assert {:ok, true} == RoaringBitset.contains?(bitset, 2)
+  end
+
   test "contains?/2" do
     {:ok, bitset} = RoaringBitset.new()
 
