@@ -5,6 +5,10 @@ defmodule Ecto.RoaringBitset do
 
   def cast(nil), do: {:ok, nil}
 
+  def cast(list) when is_list(list) do
+    RoaringBitset.from_list(list)
+  end
+
   def cast(bitset) when is_reference(bitset) do
     {:ok, bitset}
   end
@@ -35,7 +39,8 @@ defmodule Ecto.RoaringBitset do
   def equal?(nil, _), do: false
   def equal?(_, nil), do: false
 
-  def equal?(bitset_ref_1, bitset_ref_2) when is_reference(bitset_ref_1) and is_reference(bitset_ref_2) do
+  def equal?(bitset_ref_1, bitset_ref_2)
+      when is_reference(bitset_ref_1) and is_reference(bitset_ref_2) do
     # Ecto uses equal? to determine if a field has changed in a changeset. However,
     # our bitset membership may have changed even if the reference did not change.
     # If that is the case, bitset_ref_1 will be the same as bitset_ref_2 and will always
