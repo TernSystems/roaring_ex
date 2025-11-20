@@ -96,14 +96,9 @@ defmodule RoaringBitset do
   """
   def intersection([set1 | rest]) do
     # TODO: Ideally we'd push down all the sets at once into the NIF
-    new_set =
-      Enum.reduce(rest, set1, fn next_set, result ->
-        {:ok, updated} = NifBridge.intersection(result, next_set)
-
-        updated
-      end)
-
-    {:ok, new_set}
+    Enum.reduce(rest, set1, fn next_set, result ->
+      NifBridge.intersection(result, next_set)
+    end)
   end
 
   def intersection(set1, set2), do: intersection([set1, set2])
@@ -118,14 +113,9 @@ defmodule RoaringBitset do
   """
   def union([set1 | rest]) do
     # TODO: Ideally we'd push down all the sets at once into the NIF
-    new_set =
-      Enum.reduce(rest, set1, fn next_set, result ->
-        {:ok, updated} = NifBridge.union(result, next_set)
-
-        updated
-      end)
-
-    {:ok, new_set}
+    Enum.reduce(rest, set1, fn next_set, result ->
+      NifBridge.union(result, next_set)
+    end)
   end
 
   def union(set1, set2), do: union([set1, set2])

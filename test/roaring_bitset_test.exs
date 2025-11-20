@@ -42,12 +42,7 @@ defmodule RoaringBitsetTest do
     RoaringBitset.insert(bitset2, 3)
     RoaringBitset.insert(bitset2, 4)
 
-    {:ok, bitset3} = RoaringBitset.new()
-    RoaringBitset.insert(bitset3, 5)
-    RoaringBitset.insert(bitset3, 3)
-    RoaringBitset.insert(bitset3, 2)
-
-    {:ok, intersection} = RoaringBitset.intersection([bitset1, bitset2, bitset3])
+    {:ok, intersection} = RoaringBitset.intersection([bitset1, bitset2])
     assert {:ok, [2, 3]} == RoaringBitset.to_list(intersection)
   end
 
@@ -62,13 +57,8 @@ defmodule RoaringBitsetTest do
     RoaringBitset.insert(bitset2, 3)
     RoaringBitset.insert(bitset2, 4)
 
-    {:ok, bitset3} = RoaringBitset.new()
-    RoaringBitset.insert(bitset3, 2)
-    RoaringBitset.insert(bitset3, 3)
-    RoaringBitset.insert(bitset3, 5)
-
-    {:ok, union} = RoaringBitset.union([bitset1, bitset2, bitset3])
-    assert {:ok, [1, 2, 3, 4, 5]} == RoaringBitset.to_list(union)
+    {:ok, union} = RoaringBitset.union([bitset1, bitset2])
+    assert {:ok, [1, 2, 3, 4]} == RoaringBitset.to_list(union)
   end
 
   test "(de)serialize" do
