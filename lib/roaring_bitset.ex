@@ -131,6 +131,18 @@ defmodule RoaringBitset do
   def union(set1, set2), do: union([set1, set2])
 
   @doc """
+  Returns a reference to a new set representing the xor of
+  two sets
+
+  ## Examples
+      iex> RoaringBitset.xor(bitset_ref, bitset_ref)
+      {:ok, new_bitset_ref}
+  """
+  def xor(set1, set2) do
+    NifBridge.xor(set1, set2)
+  end
+
+  @doc """
   Serializes the bitset to the [cross platform serialization format](https://github.com/RoaringBitmap/RoaringFormatSpec/)
   in binary form.  (64-bit)
 
