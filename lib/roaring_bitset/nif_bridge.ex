@@ -10,6 +10,8 @@ defmodule RoaringBitset.NifBridge do
   def contains(_set, _index), do: :erlang.nif_error(:nif_not_loaded)
   def intersection(_set1, _set2), do: :erlang.nif_error(:nif_not_loaded)
   def union(_set1, _set2), do: :erlang.nif_error(:nif_not_loaded)
+
+  def xor(_set1, _set2), do: :erlang.nif_error(:nif_not_loaded)
   def serialize(_set), do: :erlang.nif_error(:nif_not_loaded)
   def deserialize(_binary), do: :erlang.nif_error(:nif_not_loaded)
   def equal(_set1, _set2), do: :erlang.nif_error(:nif_not_loaded)

@@ -113,6 +113,24 @@ fn union(resource1: ResourceArc<RoaringBitsetResource>, resource2: ResourceArc<R
 }
 
 #[rustler::nif]
+fn xor(resource1: ResourceArc<RoaringBitsetResource>, resource2: ResourceArc<RoaringBitsetResource>) -> Result<RoaringBitsetArc, Atom> {
+    let set1 = match resource1.0.try_read() {
+        Err(_) => return Err(atoms::lock_fail()),
+        Ok(guard) => guard,
+    };
+
+    let set2 = match resource2.0.try_read() {
+        Err(_) => return Err(atoms::lock_fail()),
+        Ok(guard) => guard,
+    };
+
+    let result = set1.clone() ^ set2.clone();
+    let new_resource = ResourceArc::new(RoaringBitsetResource(RwLock::new(result)));
+
+    Ok(new_resource)
+}
+
+#[rustler::nif]
 fn serialize(env: Env, resource: ResourceArc<RoaringBitsetResource>) -> Result<Binary, Atom> {
     let set = match resource.0.try_read() {
         Err(_) => return Err(atoms::lock_fail()),
