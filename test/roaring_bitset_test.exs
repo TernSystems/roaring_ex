@@ -86,6 +86,21 @@ defmodule RoaringBitsetTest do
     assert {:ok, [1, 4]} == RoaringBitset.to_list(xor)
   end
 
+  test "difference/2" do
+    {:ok, bitset1} = RoaringBitset.new()
+    RoaringBitset.insert(bitset1, 1)
+    RoaringBitset.insert(bitset1, 2)
+    RoaringBitset.insert(bitset1, 3)
+
+    {:ok, bitset2} = RoaringBitset.new()
+    RoaringBitset.insert(bitset2, 2)
+    RoaringBitset.insert(bitset2, 3)
+    RoaringBitset.insert(bitset2, 4)
+
+    {:ok, difference} = RoaringBitset.difference(bitset1, bitset2)
+    assert {:ok, [1]} == RoaringBitset.to_list(difference)
+  end
+
   test "(de)serialize" do
     {:ok, bitset1} = RoaringBitset.new()
     RoaringBitset.insert(bitset1, 1)

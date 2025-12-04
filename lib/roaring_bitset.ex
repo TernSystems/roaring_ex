@@ -143,6 +143,18 @@ defmodule RoaringBitset do
   end
 
   @doc """
+  Returns a reference to a new set representing the difference of
+  two sets
+
+  ## Examples
+      iex> RoaringBitset.difference(bitset_ref, bitset_ref)
+      {:ok, new_bitset_ref}
+  """
+  def difference(set1, set2) do
+    NifBridge.difference(set1, set2)
+  end
+
+  @doc """
   Serializes the bitset to the [cross platform serialization format](https://github.com/RoaringBitmap/RoaringFormatSpec/)
   in binary form.  (64-bit)
 
