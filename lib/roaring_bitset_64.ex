@@ -1,4 +1,4 @@
-defmodule RoaringBitset do
+defmodule RoaringBitset64 do
   @moduledoc """
   Provides a NIF for interfacing with [Roaring Bitmaps]
   (https://github.com/RoaringBitmap/roaring-rs)
@@ -20,7 +20,7 @@ defmodule RoaringBitset do
       {:ok, bitset_ref}
   """
   def new() do
-    NifBridge.new()
+    NifBridge.new_64()
   end
 
   @doc """
@@ -34,7 +34,7 @@ defmodule RoaringBitset do
   def from_list(members) do
     # TODO: implement this within the NIF
     {:ok, set} = new()
-    Enum.each(members, &NifBridge.insert(set, &1))
+    Enum.each(members, &NifBridge.insert_64(set, &1))
 
     {:ok, set}
   end
@@ -48,7 +48,7 @@ defmodule RoaringBitset do
       {:ok, [1, 2, 22]}
   """
   def to_list(set) do
-    NifBridge.to_list(set)
+    NifBridge.to_list_64(set)
   end
 
   @doc """
@@ -59,7 +59,7 @@ defmodule RoaringBitset do
       :ok
   """
   def insert(set, member) do
-    {:ok, :ok} = NifBridge.insert(set, member)
+    {:ok, :ok} = NifBridge.insert_64(set, member)
     :ok
   end
 
@@ -71,7 +71,7 @@ defmodule RoaringBitset do
       :ok
   """
   def remove(set, member) do
-    {:ok, :ok} = NifBridge.remove(set, member)
+    {:ok, :ok} = NifBridge.remove_64(set, member)
     :ok
   end
 
@@ -83,7 +83,7 @@ defmodule RoaringBitset do
       {:ok, false}
   """
   def contains?(set, index) do
-    NifBridge.contains(set, index)
+    NifBridge.contains_64(set, index)
   end
 
   @doc """
@@ -98,7 +98,7 @@ defmodule RoaringBitset do
     # TODO: Ideally we'd push down all the sets at once into the NIF
     new_set =
       Enum.reduce(rest, set1, fn next_set, result ->
-        {:ok, updated} = NifBridge.intersection(result, next_set)
+        {:ok, updated} = NifBridge.intersection_64(result, next_set)
 
         updated
       end)
@@ -120,7 +120,7 @@ defmodule RoaringBitset do
     # TODO: Ideally we'd push down all the sets at once into the NIF
     new_set =
       Enum.reduce(rest, set1, fn next_set, result ->
-        {:ok, updated} = NifBridge.union(result, next_set)
+        {:ok, updated} = NifBridge.union_64(result, next_set)
 
         updated
       end)
@@ -139,7 +139,7 @@ defmodule RoaringBitset do
       {:ok, new_bitset_ref}
   """
   def xor(set1, set2) do
-    NifBridge.xor(set1, set2)
+    NifBridge.xor_64(set1, set2)
   end
 
   @doc """
@@ -151,7 +151,7 @@ defmodule RoaringBitset do
       {:ok, new_bitset_ref}
   """
   def difference(set1, set2) do
-    NifBridge.difference(set1, set2)
+    NifBridge.difference_64(set1, set2)
   end
 
   @doc """
@@ -163,7 +163,7 @@ defmodule RoaringBitset do
       {:ok, <<...>>}
   """
   def serialize(set) do
-    NifBridge.serialize(set)
+    NifBridge.serialize_64(set)
   end
 
   @doc """
@@ -176,20 +176,20 @@ defmodule RoaringBitset do
       {:ok, bitset_ref}
   """
   def deserialize(binary) do
-    NifBridge.deserialize(binary)
+    NifBridge.deserialize_64(binary)
   end
 
   @doc """
   Check for the equality of two sets
   """
   def equal?(set1, set2) do
-    NifBridge.equal(set1, set2)
+    NifBridge.equal_64(set1, set2)
   end
 
   @doc """
   Returns the number of members within the set
   """
   def size(set) do
-    NifBridge.size(set)
+    NifBridge.size_64(set)
   end
 end
