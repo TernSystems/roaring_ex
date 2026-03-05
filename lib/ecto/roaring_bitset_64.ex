@@ -1,4 +1,4 @@
-defmodule Ecto.RoaringBitset do
+defmodule Ecto.RoaringBitset64 do
   use Ecto.Type
 
   def type(), do: :binary
@@ -6,7 +6,7 @@ defmodule Ecto.RoaringBitset do
   def cast(nil), do: {:ok, nil}
 
   def cast(list) when is_list(list) do
-    RoaringBitset.from_list(list)
+    RoaringBitset64.from_list(list)
   end
 
   def cast(bitset) when is_reference(bitset) do
@@ -14,11 +14,11 @@ defmodule Ecto.RoaringBitset do
   end
 
   def cast(data) when is_binary(data) do
-    RoaringBitset.deserialize(data)
+    RoaringBitset64.deserialize(data)
   end
 
   def load(data) when is_binary(data) do
-    RoaringBitset.deserialize(data)
+    RoaringBitset64.deserialize(data)
   end
 
   def load(nil), do: {:ok, nil}
@@ -26,7 +26,7 @@ defmodule Ecto.RoaringBitset do
   def dump(nil), do: {:ok, nil}
 
   def dump(bitset) when is_reference(bitset) do
-    RoaringBitset.serialize(bitset)
+    RoaringBitset64.serialize(bitset)
   end
 
   def dump(data) when is_binary(data) do
