@@ -4,7 +4,7 @@ defmodule Roaring.MixProject do
   def project do
     [
       app: :roaring,
-      version: "0.12.0",
+      version: "0.13.0",
       elixir: "~> 1.18",
       start_permanent: Mix.env() == :prod,
       description: description(),

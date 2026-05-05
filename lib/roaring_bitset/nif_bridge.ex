@@ -1,4 +1,4 @@
-defmodule RoaringBitset.NifBridge do
+defmodule RoaringBitmap.NifBridge do
   use Rustler,
     otp_app: :roaring,
     crate: :roaring_nif

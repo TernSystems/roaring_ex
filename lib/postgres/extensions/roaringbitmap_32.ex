@@ -21,15 +21,15 @@ defmodule Roaring.Postgres.Extensions.RoaringBitmap32 do
 
   def encode(_opts) do
     quote location: :keep do
-      %x{} = bitset when x == RoaringBitset32 ->
-        [RoaringBitset32.serialize(bitset)]
+      %x{} = bitset when x == RoaringBitmap32 ->
+        [RoaringBitmap32.serialize(bitset)]
     end
   end
 
   def decode(:reference) do
     quote location: :keep do
       <<len::integer-size(32), data::binary-size(len)>> ->
-        {:ok, bitset} = RoaringBitset32.deserialize(data)
+        {:ok, bitset} = RoaringBitmap32.deserialize(data)
         bitset
     end
   end
@@ -37,7 +37,7 @@ defmodule Roaring.Postgres.Extensions.RoaringBitmap32 do
   def decode(:copy) do
     quote location: :keep do
       <<len::integer-size(32), data::binary-size(len)>> ->
-        {:ok, bitset} = RoaringBitset32.deserialize(data)
+        {:ok, bitset} = RoaringBitmap32.deserialize(data)
         bitset
     end
   end

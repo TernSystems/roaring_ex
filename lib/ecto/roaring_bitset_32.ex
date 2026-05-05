@@ -1,4 +1,17 @@
-defmodule Ecto.RoaringBitset32 do
+defmodule EctoRoaring.RoaringBitmap32 do
+  @moduledoc """
+  Ecto support for loading RoaringBitmap32 from the DB.
+
+  Usage:
+
+      create table(:sets) do
+        add :membership_32, :bytea
+      end
+
+      schema "sets" do
+        field :membership_32, EctoRoaring.RoaringBitmap32
+      end
+  """
   use Ecto.Type
 
   def type(), do: :binary
@@ -6,7 +19,7 @@ defmodule Ecto.RoaringBitset32 do
   def cast(nil), do: {:ok, nil}
 
   def cast(list) when is_list(list) do
-    RoaringBitset32.from_list(list)
+    RoaringBitmap32.from_list(list)
   end
 
   def cast(bitset) when is_reference(bitset) do
@@ -14,11 +27,11 @@ defmodule Ecto.RoaringBitset32 do
   end
 
   def cast(data) when is_binary(data) do
-    RoaringBitset32.deserialize(data)
+    RoaringBitmap32.deserialize(data)
   end
 
   def load(data) when is_binary(data) do
-    RoaringBitset32.deserialize(data)
+    RoaringBitmap32.deserialize(data)
   end
 
   def load(nil), do: {:ok, nil}
@@ -26,7 +39,7 @@ defmodule Ecto.RoaringBitset32 do
   def dump(nil), do: {:ok, nil}
 
   def dump(bitset) when is_reference(bitset) do
-    RoaringBitset32.serialize(bitset)
+    RoaringBitmap32.serialize(bitset)
   end
 
   def dump(data) when is_binary(data) do
