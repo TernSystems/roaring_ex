@@ -1,7 +1,6 @@
-defmodule RoaringBitset64 do
+defmodule RoaringBitmap64 do
   @moduledoc """
-  Provides a NIF for interfacing with [Roaring Bitmaps]
-  (https://github.com/RoaringBitmap/roaring-rs)
+  Provides a NIF for interfacing with [Roaring Bitmaps](https://github.com/RoaringBitmap/roaring-rs)
 
   The bitsets are managed in memory by rust behind a mutex.
   All members are 64 bit unsigned ints
@@ -9,14 +8,14 @@ defmodule RoaringBitset64 do
   Any method on an existing bitset ref may return {:error, :lock_fail}
   if the method is unable to obtain mutex access
   """
-  alias RoaringBitset.NifBridge
+  alias RoaringBitmap.NifBridge
 
   @doc """
   Return a reference to a new roaring bitset
 
   ## Examples
 
-      iex> RoaringBitset.new()
+      iex> RoaringBitmap.new()
       {:ok, bitset_ref}
   """
   def new() do
@@ -25,10 +24,10 @@ defmodule RoaringBitset64 do
 
   @doc """
   Create a new bitset from the list of `members`. Can take any enumerable as input,
-  but may not be performant, particularly for large lists. Prefer RoaringBitset.deserialize/1
+  but may not be performant, particularly for large lists. Prefer RoaringBitmap.deserialize/1
   if performance is critical
   ## Examples
-      iex> RoaringBitset.from_list([1, 2, 22])
+      iex> RoaringBitmap.from_list([1, 2, 22])
       {:ok, bitset_ref}
   """
   def from_list(members) do
@@ -41,10 +40,10 @@ defmodule RoaringBitset64 do
 
   @doc """
   Export this bitset to a list. Leaves the `bitset_ref` still valid. May not be performant
-  particularly for large lists. Prefer RoaringBitset.serialize/1 if performance is critical
+  particularly for large lists. Prefer RoaringBitmap.serialize/1 if performance is critical
 
   ## Examples
-      iex> RoaringBitset.to_list(bitset_ref)
+      iex> RoaringBitmap.to_list(bitset_ref)
       {:ok, [1, 2, 22]}
   """
   def to_list(set) do
@@ -55,7 +54,7 @@ defmodule RoaringBitset64 do
   Inserts a `member` into the referenced set
 
   ## Examples
-      iex> RoaringBitset.insert(bitset_ref, 15)
+      iex> RoaringBitmap.insert(bitset_ref, 15)
       :ok
   """
   def insert(set, member) do
@@ -67,7 +66,7 @@ defmodule RoaringBitset64 do
   Removes a `member` from the referenced set
 
   ## Examples
-      iex> RoaringBitset.remove(bitset_ref, 15)
+      iex> RoaringBitmap.remove(bitset_ref, 15)
       :ok
   """
   def remove(set, member) do
@@ -79,7 +78,7 @@ defmodule RoaringBitset64 do
   Checks for set membership.
 
   ## Examples
-      iex> RoaringBitset.insert(bitset_ref, 15)
+      iex> RoaringBitmap.insert(bitset_ref, 15)
       {:ok, false}
   """
   def contains?(set, index) do
@@ -91,7 +90,7 @@ defmodule RoaringBitset64 do
   all supplied sets
 
   ## Examples
-      iex> RoaringBitset.intersection([bitset_ref, bitset_ref, ...])
+      iex> RoaringBitmap.intersection([bitset_ref, bitset_ref, ...])
       {:ok, new_bitset_ref}
   """
   def intersection([set1 | rest]) do
@@ -113,7 +112,7 @@ defmodule RoaringBitset64 do
   all supplied sets
 
   ## Examples
-      iex> RoaringBitset.union([bitset_ref, bitset_ref, ...])
+      iex> RoaringBitmap.union([bitset_ref, bitset_ref, ...])
       {:ok, new_bitset_ref}
   """
   def union([set1 | rest]) do
@@ -135,7 +134,7 @@ defmodule RoaringBitset64 do
   two sets
 
   ## Examples
-      iex> RoaringBitset.xor(bitset_ref, bitset_ref)
+      iex> RoaringBitmap.xor(bitset_ref, bitset_ref)
       {:ok, new_bitset_ref}
   """
   def xor(set1, set2) do
@@ -147,7 +146,7 @@ defmodule RoaringBitset64 do
   two sets
 
   ## Examples
-      iex> RoaringBitset.difference(bitset_ref, bitset_ref)
+      iex> RoaringBitmap.difference(bitset_ref, bitset_ref)
       {:ok, new_bitset_ref}
   """
   def difference(set1, set2) do
@@ -159,7 +158,7 @@ defmodule RoaringBitset64 do
   in binary form.  (64-bit)
 
   ## Examples
-      iex> RoaringBitset.serialize(bitset_ref)
+      iex> RoaringBitmap.serialize(bitset_ref)
       {:ok, <<...>>}
   """
   def serialize(set) do
@@ -172,7 +171,7 @@ defmodule RoaringBitset64 do
   in binary form. (64-bit)
 
   ## Examples
-      iex> RoaringBitset.deserialize(binary)
+      iex> RoaringBitmap.deserialize(binary)
       {:ok, bitset_ref}
   """
   def deserialize(binary) do

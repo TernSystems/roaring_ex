@@ -11,27 +11,27 @@ use roaring::RoaringTreemap;
 // 64-bit resource (RoaringTreemap)
 // ---------------------------------------------------------------------------
 
-pub struct RoaringBitset64Resource(RwLock<RoaringTreemap>);
+pub struct RoaringBitmap64Resource(RwLock<RoaringTreemap>);
 
 #[rustler::resource_impl]
-impl Resource for RoaringBitset64Resource {
+impl Resource for RoaringBitmap64Resource {
     const IMPLEMENTS_DESTRUCTOR: bool = false;
 }
 
-type RoaringBitsetArc = ResourceArc<RoaringBitset64Resource>;
+type RoaringBitmapArc = ResourceArc<RoaringBitmap64Resource>;
 
 // ---------------------------------------------------------------------------
 // 32-bit resource (RoaringBitmap)
 // ---------------------------------------------------------------------------
 
-pub struct RoaringBitset32Resource(RwLock<RoaringBitmap>);
+pub struct RoaringBitmap32Resource(RwLock<RoaringBitmap>);
 
 #[rustler::resource_impl]
-impl Resource for RoaringBitset32Resource {
+impl Resource for RoaringBitmap32Resource {
     const IMPLEMENTS_DESTRUCTOR: bool = false;
 }
 
-type RoaringBitset32Arc = ResourceArc<RoaringBitset32Resource>;
+type RoaringBitmap32Arc = ResourceArc<RoaringBitmap32Resource>;
 
 // ---------------------------------------------------------------------------
 // Atoms
@@ -52,13 +52,13 @@ mod atoms {
 // ---------------------------------------------------------------------------
 
 #[rustler::nif]
-fn new_64() -> (Atom, RoaringBitsetArc) {
-    let resource = ResourceArc::new(RoaringBitset64Resource(RwLock::new(RoaringTreemap::new())));
+fn new_64() -> (Atom, RoaringBitmapArc) {
+    let resource = ResourceArc::new(RoaringBitmap64Resource(RwLock::new(RoaringTreemap::new())));
     (atoms::ok(), resource)
 }
 
 #[rustler::nif]
-fn to_list_64(resource: ResourceArc<RoaringBitset64Resource>) -> Result<Vec<u64>, Atom> {
+fn to_list_64(resource: ResourceArc<RoaringBitmap64Resource>) -> Result<Vec<u64>, Atom> {
     let set = match resource.0.try_read() {
         Err(_) => return Err(atoms::lock_fail()),
         Ok(guard) => guard,
@@ -67,7 +67,7 @@ fn to_list_64(resource: ResourceArc<RoaringBitset64Resource>) -> Result<Vec<u64>
 }
 
 #[rustler::nif]
-fn insert_64(resource: ResourceArc<RoaringBitset64Resource>, index: u64) -> Result<Atom, Atom> {
+fn insert_64(resource: ResourceArc<RoaringBitmap64Resource>, index: u64) -> Result<Atom, Atom> {
     let mut set = match resource.0.try_write() {
         Err(_) => return Err(atoms::lock_fail()),
         Ok(guard) => guard,
@@ -77,7 +77,7 @@ fn insert_64(resource: ResourceArc<RoaringBitset64Resource>, index: u64) -> Resu
 }
 
 #[rustler::nif]
-fn remove_64(resource: ResourceArc<RoaringBitset64Resource>, index: u64) -> Result<Atom, Atom> {
+fn remove_64(resource: ResourceArc<RoaringBitmap64Resource>, index: u64) -> Result<Atom, Atom> {
     let mut set = match resource.0.try_write() {
         Err(_) => return Err(atoms::lock_fail()),
         Ok(guard) => guard,
@@ -87,7 +87,7 @@ fn remove_64(resource: ResourceArc<RoaringBitset64Resource>, index: u64) -> Resu
 }
 
 #[rustler::nif]
-fn contains_64(resource: ResourceArc<RoaringBitset64Resource>, index: u64) -> Result<bool, Atom> {
+fn contains_64(resource: ResourceArc<RoaringBitmap64Resource>, index: u64) -> Result<bool, Atom> {
     let set = match resource.0.try_read() {
         Err(_) => return Err(atoms::lock_fail()),
         Ok(guard) => guard,
@@ -97,9 +97,9 @@ fn contains_64(resource: ResourceArc<RoaringBitset64Resource>, index: u64) -> Re
 
 #[rustler::nif]
 fn intersection_64(
-    resource1: ResourceArc<RoaringBitset64Resource>,
-    resource2: ResourceArc<RoaringBitset64Resource>,
-) -> Result<RoaringBitsetArc, Atom> {
+    resource1: ResourceArc<RoaringBitmap64Resource>,
+    resource2: ResourceArc<RoaringBitmap64Resource>,
+) -> Result<RoaringBitmapArc, Atom> {
     let set1 = match resource1.0.try_read() {
         Err(_) => return Err(atoms::lock_fail()),
         Ok(guard) => guard,
@@ -109,16 +109,16 @@ fn intersection_64(
         Ok(guard) => guard,
     };
     let result = set1.clone() & set2.clone();
-    Ok(ResourceArc::new(RoaringBitset64Resource(RwLock::new(
+    Ok(ResourceArc::new(RoaringBitmap64Resource(RwLock::new(
         result,
     ))))
 }
 
 #[rustler::nif]
 fn union_64(
-    resource1: ResourceArc<RoaringBitset64Resource>,
-    resource2: ResourceArc<RoaringBitset64Resource>,
-) -> Result<RoaringBitsetArc, Atom> {
+    resource1: ResourceArc<RoaringBitmap64Resource>,
+    resource2: ResourceArc<RoaringBitmap64Resource>,
+) -> Result<RoaringBitmapArc, Atom> {
     let set1 = match resource1.0.try_read() {
         Err(_) => return Err(atoms::lock_fail()),
         Ok(guard) => guard,
@@ -128,16 +128,16 @@ fn union_64(
         Ok(guard) => guard,
     };
     let result = set1.clone() | set2.clone();
-    Ok(ResourceArc::new(RoaringBitset64Resource(RwLock::new(
+    Ok(ResourceArc::new(RoaringBitmap64Resource(RwLock::new(
         result,
     ))))
 }
 
 #[rustler::nif]
 fn xor_64(
-    resource1: ResourceArc<RoaringBitset64Resource>,
-    resource2: ResourceArc<RoaringBitset64Resource>,
-) -> Result<RoaringBitsetArc, Atom> {
+    resource1: ResourceArc<RoaringBitmap64Resource>,
+    resource2: ResourceArc<RoaringBitmap64Resource>,
+) -> Result<RoaringBitmapArc, Atom> {
     let set1 = match resource1.0.try_read() {
         Err(_) => return Err(atoms::lock_fail()),
         Ok(guard) => guard,
@@ -147,16 +147,16 @@ fn xor_64(
         Ok(guard) => guard,
     };
     let result = set1.clone() ^ set2.clone();
-    Ok(ResourceArc::new(RoaringBitset64Resource(RwLock::new(
+    Ok(ResourceArc::new(RoaringBitmap64Resource(RwLock::new(
         result,
     ))))
 }
 
 #[rustler::nif]
 fn difference_64(
-    resource1: ResourceArc<RoaringBitset64Resource>,
-    resource2: ResourceArc<RoaringBitset64Resource>,
-) -> Result<RoaringBitsetArc, Atom> {
+    resource1: ResourceArc<RoaringBitmap64Resource>,
+    resource2: ResourceArc<RoaringBitmap64Resource>,
+) -> Result<RoaringBitmapArc, Atom> {
     let set1 = match resource1.0.try_read() {
         Err(_) => return Err(atoms::lock_fail()),
         Ok(guard) => guard,
@@ -166,13 +166,13 @@ fn difference_64(
         Ok(guard) => guard,
     };
     let result = set1.clone() - set2.clone();
-    Ok(ResourceArc::new(RoaringBitset64Resource(RwLock::new(
+    Ok(ResourceArc::new(RoaringBitmap64Resource(RwLock::new(
         result,
     ))))
 }
 
 #[rustler::nif]
-fn serialize_64(env: Env, resource: ResourceArc<RoaringBitset64Resource>) -> Result<Binary, Atom> {
+fn serialize_64(env: Env, resource: ResourceArc<RoaringBitmap64Resource>) -> Result<Binary, Atom> {
     let set = match resource.0.try_read() {
         Err(_) => return Err(atoms::lock_fail()),
         Ok(guard) => guard,
@@ -185,16 +185,16 @@ fn serialize_64(env: Env, resource: ResourceArc<RoaringBitset64Resource>) -> Res
 }
 
 #[rustler::nif]
-fn deserialize_64(binary: Binary) -> Result<RoaringBitsetArc, Atom> {
+fn deserialize_64(binary: Binary) -> Result<RoaringBitmapArc, Atom> {
     let buffer = binary.as_slice();
     let set: RoaringTreemap = RoaringTreemap::deserialize_from(&buffer[..]).unwrap();
-    Ok(ResourceArc::new(RoaringBitset64Resource(RwLock::new(set))))
+    Ok(ResourceArc::new(RoaringBitmap64Resource(RwLock::new(set))))
 }
 
 #[rustler::nif]
 fn equal_64(
-    resource1: ResourceArc<RoaringBitset64Resource>,
-    resource2: ResourceArc<RoaringBitset64Resource>,
+    resource1: ResourceArc<RoaringBitmap64Resource>,
+    resource2: ResourceArc<RoaringBitmap64Resource>,
 ) -> Result<bool, Atom> {
     let set1 = match resource1.0.try_read() {
         Err(_) => return Err(atoms::lock_fail()),
@@ -208,7 +208,7 @@ fn equal_64(
 }
 
 #[rustler::nif]
-fn size_64(resource: ResourceArc<RoaringBitset64Resource>) -> Result<u64, Atom> {
+fn size_64(resource: ResourceArc<RoaringBitmap64Resource>) -> Result<u64, Atom> {
     let set = match resource.0.try_read() {
         Err(_) => return Err(atoms::lock_fail()),
         Ok(guard) => guard,
@@ -221,13 +221,13 @@ fn size_64(resource: ResourceArc<RoaringBitset64Resource>) -> Result<u64, Atom> 
 // ---------------------------------------------------------------------------
 
 #[rustler::nif]
-fn new_32() -> (Atom, RoaringBitset32Arc) {
-    let resource = ResourceArc::new(RoaringBitset32Resource(RwLock::new(RoaringBitmap::new())));
+fn new_32() -> (Atom, RoaringBitmap32Arc) {
+    let resource = ResourceArc::new(RoaringBitmap32Resource(RwLock::new(RoaringBitmap::new())));
     (atoms::ok(), resource)
 }
 
 #[rustler::nif]
-fn to_list_32(resource: ResourceArc<RoaringBitset32Resource>) -> Result<Vec<u32>, Atom> {
+fn to_list_32(resource: ResourceArc<RoaringBitmap32Resource>) -> Result<Vec<u32>, Atom> {
     let set = match resource.0.try_read() {
         Err(_) => return Err(atoms::lock_fail()),
         Ok(guard) => guard,
@@ -236,7 +236,7 @@ fn to_list_32(resource: ResourceArc<RoaringBitset32Resource>) -> Result<Vec<u32>
 }
 
 #[rustler::nif]
-fn insert_32(resource: ResourceArc<RoaringBitset32Resource>, index: u32) -> Result<Atom, Atom> {
+fn insert_32(resource: ResourceArc<RoaringBitmap32Resource>, index: u32) -> Result<Atom, Atom> {
     let mut set = match resource.0.try_write() {
         Err(_) => return Err(atoms::lock_fail()),
         Ok(guard) => guard,
@@ -246,7 +246,7 @@ fn insert_32(resource: ResourceArc<RoaringBitset32Resource>, index: u32) -> Resu
 }
 
 #[rustler::nif]
-fn remove_32(resource: ResourceArc<RoaringBitset32Resource>, index: u32) -> Result<Atom, Atom> {
+fn remove_32(resource: ResourceArc<RoaringBitmap32Resource>, index: u32) -> Result<Atom, Atom> {
     let mut set = match resource.0.try_write() {
         Err(_) => return Err(atoms::lock_fail()),
         Ok(guard) => guard,
@@ -256,7 +256,7 @@ fn remove_32(resource: ResourceArc<RoaringBitset32Resource>, index: u32) -> Resu
 }
 
 #[rustler::nif]
-fn contains_32(resource: ResourceArc<RoaringBitset32Resource>, index: u32) -> Result<bool, Atom> {
+fn contains_32(resource: ResourceArc<RoaringBitmap32Resource>, index: u32) -> Result<bool, Atom> {
     let set = match resource.0.try_read() {
         Err(_) => return Err(atoms::lock_fail()),
         Ok(guard) => guard,
@@ -266,9 +266,9 @@ fn contains_32(resource: ResourceArc<RoaringBitset32Resource>, index: u32) -> Re
 
 #[rustler::nif]
 fn intersection_32(
-    resource1: ResourceArc<RoaringBitset32Resource>,
-    resource2: ResourceArc<RoaringBitset32Resource>,
-) -> Result<RoaringBitset32Arc, Atom> {
+    resource1: ResourceArc<RoaringBitmap32Resource>,
+    resource2: ResourceArc<RoaringBitmap32Resource>,
+) -> Result<RoaringBitmap32Arc, Atom> {
     let set1 = match resource1.0.try_read() {
         Err(_) => return Err(atoms::lock_fail()),
         Ok(guard) => guard,
@@ -278,16 +278,16 @@ fn intersection_32(
         Ok(guard) => guard,
     };
     let result = set1.clone() & set2.clone();
-    Ok(ResourceArc::new(RoaringBitset32Resource(RwLock::new(
+    Ok(ResourceArc::new(RoaringBitmap32Resource(RwLock::new(
         result,
     ))))
 }
 
 #[rustler::nif]
 fn union_32(
-    resource1: ResourceArc<RoaringBitset32Resource>,
-    resource2: ResourceArc<RoaringBitset32Resource>,
-) -> Result<RoaringBitset32Arc, Atom> {
+    resource1: ResourceArc<RoaringBitmap32Resource>,
+    resource2: ResourceArc<RoaringBitmap32Resource>,
+) -> Result<RoaringBitmap32Arc, Atom> {
     let set1 = match resource1.0.try_read() {
         Err(_) => return Err(atoms::lock_fail()),
         Ok(guard) => guard,
@@ -297,16 +297,16 @@ fn union_32(
         Ok(guard) => guard,
     };
     let result = set1.clone() | set2.clone();
-    Ok(ResourceArc::new(RoaringBitset32Resource(RwLock::new(
+    Ok(ResourceArc::new(RoaringBitmap32Resource(RwLock::new(
         result,
     ))))
 }
 
 #[rustler::nif]
 fn xor_32(
-    resource1: ResourceArc<RoaringBitset32Resource>,
-    resource2: ResourceArc<RoaringBitset32Resource>,
-) -> Result<RoaringBitset32Arc, Atom> {
+    resource1: ResourceArc<RoaringBitmap32Resource>,
+    resource2: ResourceArc<RoaringBitmap32Resource>,
+) -> Result<RoaringBitmap32Arc, Atom> {
     let set1 = match resource1.0.try_read() {
         Err(_) => return Err(atoms::lock_fail()),
         Ok(guard) => guard,
@@ -316,16 +316,16 @@ fn xor_32(
         Ok(guard) => guard,
     };
     let result = set1.clone() ^ set2.clone();
-    Ok(ResourceArc::new(RoaringBitset32Resource(RwLock::new(
+    Ok(ResourceArc::new(RoaringBitmap32Resource(RwLock::new(
         result,
     ))))
 }
 
 #[rustler::nif]
 fn difference_32(
-    resource1: ResourceArc<RoaringBitset32Resource>,
-    resource2: ResourceArc<RoaringBitset32Resource>,
-) -> Result<RoaringBitset32Arc, Atom> {
+    resource1: ResourceArc<RoaringBitmap32Resource>,
+    resource2: ResourceArc<RoaringBitmap32Resource>,
+) -> Result<RoaringBitmap32Arc, Atom> {
     let set1 = match resource1.0.try_read() {
         Err(_) => return Err(atoms::lock_fail()),
         Ok(guard) => guard,
@@ -335,13 +335,13 @@ fn difference_32(
         Ok(guard) => guard,
     };
     let result = set1.clone() - set2.clone();
-    Ok(ResourceArc::new(RoaringBitset32Resource(RwLock::new(
+    Ok(ResourceArc::new(RoaringBitmap32Resource(RwLock::new(
         result,
     ))))
 }
 
 #[rustler::nif]
-fn serialize_32(env: Env, resource: ResourceArc<RoaringBitset32Resource>) -> Result<Binary, Atom> {
+fn serialize_32(env: Env, resource: ResourceArc<RoaringBitmap32Resource>) -> Result<Binary, Atom> {
     let set = match resource.0.try_read() {
         Err(_) => return Err(atoms::lock_fail()),
         Ok(guard) => guard,
@@ -354,16 +354,16 @@ fn serialize_32(env: Env, resource: ResourceArc<RoaringBitset32Resource>) -> Res
 }
 
 #[rustler::nif]
-fn deserialize_32(binary: Binary) -> Result<RoaringBitset32Arc, Atom> {
+fn deserialize_32(binary: Binary) -> Result<RoaringBitmap32Arc, Atom> {
     let buffer = binary.as_slice();
     let set: RoaringBitmap = RoaringBitmap::deserialize_from(&buffer[..]).unwrap();
-    Ok(ResourceArc::new(RoaringBitset32Resource(RwLock::new(set))))
+    Ok(ResourceArc::new(RoaringBitmap32Resource(RwLock::new(set))))
 }
 
 #[rustler::nif]
 fn equal_32(
-    resource1: ResourceArc<RoaringBitset32Resource>,
-    resource2: ResourceArc<RoaringBitset32Resource>,
+    resource1: ResourceArc<RoaringBitmap32Resource>,
+    resource2: ResourceArc<RoaringBitmap32Resource>,
 ) -> Result<bool, Atom> {
     let set1 = match resource1.0.try_read() {
         Err(_) => return Err(atoms::lock_fail()),
@@ -377,7 +377,7 @@ fn equal_32(
 }
 
 #[rustler::nif]
-fn size_32(resource: ResourceArc<RoaringBitset32Resource>) -> Result<u64, Atom> {
+fn size_32(resource: ResourceArc<RoaringBitmap32Resource>) -> Result<u64, Atom> {
     let set = match resource.0.try_read() {
         Err(_) => return Err(atoms::lock_fail()),
         Ok(guard) => guard,
@@ -385,4 +385,4 @@ fn size_32(resource: ResourceArc<RoaringBitset32Resource>) -> Result<u64, Atom> 
     Ok(set.len())
 }
 
-rustler::init!("Elixir.RoaringBitset.NifBridge");
+rustler::init!("Elixir.RoaringBitmap.NifBridge");
