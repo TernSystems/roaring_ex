@@ -7,6 +7,10 @@ defmodule Roaring.MixProject do
       version: "0.12.0",
       elixir: "~> 1.18",
       start_permanent: Mix.env() == :prod,
+      description: description(),
+      source_url: "https://github.com/TernSystems/roaring_ex",
+      licenses: [],
+      package: package(),
       deps: deps()
     ]
   end
@@ -22,7 +26,19 @@ defmodule Roaring.MixProject do
   defp deps do
     [
       {:rustler, "~> 0.37.1", runtime: false},
-      {:ecto, "~> 3.13"}
+      {:ecto, "~> 3.13"},
+      {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
     ]
+  end
+
+  defp package do
+    [
+      licenses: ["MIT"],
+      links: %{"GitHub" => "https://github.com/TernSystems/roaring_ex"}
+    ]
+  end
+
+  defp description() do
+    "RoaringBitmaps in Elixir, compressed bitmaps powered by roaring-rs"
   end
 end

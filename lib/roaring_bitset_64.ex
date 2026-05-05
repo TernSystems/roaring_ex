@@ -1,7 +1,6 @@
 defmodule RoaringBitset64 do
   @moduledoc """
-  Provides a NIF for interfacing with [Roaring Bitmaps]
-  (https://github.com/RoaringBitmap/roaring-rs)
+  Provides a NIF for interfacing with [Roaring Bitmaps](https://github.com/RoaringBitmap/roaring-rs)
 
   The bitsets are managed in memory by rust behind a mutex.
   All members are 64 bit unsigned ints

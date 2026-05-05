@@ -1,7 +1,6 @@
 defmodule RoaringBitset32 do
   @moduledoc """
-  Provides a NIF for interfacing with [Roaring Bitmaps]
-  (https://github.com/RoaringBitmap/roaring-rs)
+  Provides a NIF for interfacing with [Roaring Bitmaps](https://github.com/RoaringBitmap/roaring-rs)
 
   The bitsets are managed in memory by Rust behind a mutex.
   All members are 32-bit unsigned integers (u32, max value 4,294,967,295).
