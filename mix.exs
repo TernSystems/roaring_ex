@@ -9,7 +9,6 @@ defmodule Roaring.MixProject do
       start_permanent: Mix.env() == :prod,
       description: description(),
       source_url: "https://github.com/TernSystems/roaring_ex",
-      licenses: [],
       package: package(),
       deps: deps()
     ]
@@ -34,6 +33,11 @@ defmodule Roaring.MixProject do
   defp package do
     [
       licenses: ["MIT"],
+      files: [
+        "lib",
+        "native",
+        "mix.exs"
+      ],
       links: %{"GitHub" => "https://github.com/TernSystems/roaring_ex"}
     ]
   end
