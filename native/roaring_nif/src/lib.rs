@@ -227,6 +227,14 @@ fn new_32() -> (Atom, RoaringBitmap32Arc) {
 }
 
 #[rustler::nif]
+fn from_list_32(indices: Vec<u32>) -> (Atom, RoaringBitmap32Arc) {
+    let mut set = RoaringBitmap::new();
+    set.extend(indices);
+    let resource = ResourceArc::new(RoaringBitmap32Resource(RwLock::new(set)));
+    (atoms::ok(), resource)
+}
+
+#[rustler::nif]
 fn to_list_32(resource: ResourceArc<RoaringBitmap32Resource>) -> Result<Vec<u32>, Atom> {
     let set = match resource.0.try_read() {
         Err(_) => return Err(atoms::lock_fail()),

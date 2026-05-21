@@ -20,6 +20,7 @@ defmodule RoaringBitmap.NifBridge do
 
   # 32-bit (RoaringBitmap) stubs
   def new_32(), do: :erlang.nif_error(:nif_not_loaded)
+  def from_list_32(_indices), do: :erlang.nif_error(:nif_not_loaded)
   def to_list_32(_set), do: :erlang.nif_error(:nif_not_loaded)
   def insert_32(_set, _index), do: :erlang.nif_error(:nif_not_loaded)
   def remove_32(_set, _index), do: :erlang.nif_error(:nif_not_loaded)
