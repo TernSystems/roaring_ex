@@ -34,13 +34,8 @@ defmodule RoaringBitmap32 do
       iex> RoaringBitmap32.from_list([1, 2, 22])
       {:ok, bitset_ref}
   """
-  def from_list(members) do
-    # TODO: implement this within the NIF
-    {:ok, set} = new()
-    Enum.each(members, &NifBridge.insert_32(set, &1))
-
-    {:ok, set}
-  end
+  def from_list(members) when is_list(members), do: NifBridge.from_list_32(members)
+  def from_list(members), do: NifBridge.from_list_32(Enum.to_list(members))
 
   @doc """
   Export this bitset to a list of 32-bit integers. Leaves the `bitset_ref`
