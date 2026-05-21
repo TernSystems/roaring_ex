@@ -145,4 +145,33 @@ defmodule RoaringBitmap32Test do
 
     assert {:ok, 1} == RoaringBitmap32.size(bitset)
   end
+
+  describe "from_list/1 — bulk path" do
+    alias RoaringBitmap.NifBridge
+
+    test "empty list returns empty bitmap" do
+      assert {:ok, ref} = RoaringBitmap32.from_list([])
+      assert is_reference(ref)
+      assert {:ok, list} = RoaringBitmap32.to_list(ref)
+      assert list == []
+    end
+
+    test "small list returns bitmap with exactly those members" do
+      assert {:ok, ref} = RoaringBitmap32.from_list([1, 5, 100])
+      assert {:ok, list} = RoaringBitmap32.to_list(ref)
+      assert Enum.sort(list) == [1, 5, 100]
+    end
+
+    test "large list (100k) succeeds" do
+      members = Enum.to_list(1..100_000)
+      assert {:ok, ref} = RoaringBitmap32.from_list(members)
+      assert {:ok, list} = RoaringBitmap32.to_list(ref)
+      assert length(list) == 100_000
+    end
+
+    test "direct NifBridge.from_list_32/1 returns ok+reference" do
+      assert {:ok, ref} = NifBridge.from_list_32([1, 2, 3])
+      assert is_reference(ref)
+    end
+  end
 end
